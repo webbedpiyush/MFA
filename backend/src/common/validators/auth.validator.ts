@@ -9,7 +9,6 @@ export const registerSchema = z
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: passwordSchema,
-    
   })
   .refine((value) => value.password === value.confirmPassword, {
     message: "Password does not match",
