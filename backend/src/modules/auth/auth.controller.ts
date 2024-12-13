@@ -6,6 +6,7 @@ import {
   loginSchema,
   registerSchema,
 } from "../../common/validators/auth.validator";
+import { setAuthenticationCookies } from "../../common/utils/cookie";
 
 export class AuthController {
   private authService: AuthService;
@@ -38,10 +39,17 @@ export class AuthController {
       const { user, accessToken, refreshToken, mfaRequired } =
         await this.authService.login(body);
 
-      return res.status(HttpStatus.OK).json({
-        message: "User login successfully",
-        user,
-      });
+      return setAuthenticationCookies({
+        res,
+        accessToken,
+        refreshToken,
+      })
+        .status(HttpStatus.OK)
+        .json({
+          message: "User login successfully",
+          mfaRequired,
+          user,
+        });
     }
   );
 }
