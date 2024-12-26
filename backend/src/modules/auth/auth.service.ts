@@ -7,6 +7,7 @@ import {
 } from "../../common/interface/auth.interface";
 import {
   BadRequestException,
+  NotFoundException,
   UnauthorizedException,
 } from "../../common/utils/catchError";
 import {
@@ -162,6 +163,37 @@ export class AuthService {
     return {
       accessToken,
       newRefreshToken,
+    };
+  }
+
+  public async verifyEmail(code: string) {
+    const validCode = await VerificationCodeModel.findOne({
+      code,
+      type: VerificationEnum.EMAIL_VERIFICATION,
+      expiresAt: { $gt: new Date() },
+    });
+
+    if (!validCode) {
+      throw new NotFoundException("Invalid or expired verification");
+    }
+    const updatedUser = await userModel.findByIdAndUpdate(
+      validCode.userId,
+      {
+        isEmailVerified: true,
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      throw new BadRequestException(
+        "Unable to verify email address",
+        ErrorCode.VERIFICATION_ERROR
+      );
+    }
+    await validCode.deleteOne();
+
+    return {
+      user: updatedUser,
     };
   }
 }
