@@ -17,7 +17,7 @@ export const verifyEmailTemplate = (
       .footer { font-size: 14px; color: #999999; text-align: center; padding: 20px; }
     </style></head><body>
       <div class="container">
-        <div class="header">Squeezy</div>
+        <div class="header">MFA</div>
         <div class="content">
           <h1>Confirm Your Email Address</h1>
           <p>Thank you for signing up! Please confirm your account by clicking the button below.</p>
@@ -51,7 +51,7 @@ export const passwordResetTemplate = (
       .footer { font-size: 14px; color: #999999; text-align: center; padding: 20px; }
     </style></head><body>
       <div class="container">
-        <div class="header">Squeezy</div>
+        <div class="header">MFA</div>
         <div class="content">
           <h1>Reset Your Password</h1>
           <p>We received a request to reset your password. Click the button below to proceed with resetting your password.</p>

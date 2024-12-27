@@ -1,4 +1,4 @@
-import { HttpStatus } from "../../config/http.config";
+import { HttpStatus, HttpStatusCode } from "../../config/http.config";
 import ErrorCode from "../enums/errorCode.enum";
 import { AppError } from "./AppError";
 
@@ -35,5 +35,15 @@ export class InternalServerException extends AppError {
       HttpStatus.INTERNAL_SERVER_ERROR,
       errorCode || ErrorCode.INTERNAL_SERVER_ERROR
     );
+  }
+}
+
+export class HttpException extends AppError {
+  constructor(
+    message = "Http Exception Error",
+    statusCode: HttpStatusCode,
+    errorCode?: ErrorCode
+  ) {
+    super(message, statusCode, errorCode);
   }
 }
