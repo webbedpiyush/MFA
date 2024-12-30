@@ -4,6 +4,7 @@ import { VerificationEnum } from "../../common/enums/verificationCode.enum";
 import {
   LoginDataType,
   RegisterDataType,
+  resetPasswordType,
 } from "../../common/interface/auth.interface";
 import {
   BadRequestException,
@@ -35,6 +36,7 @@ import {
   verifyEmailTemplate,
 } from "../../mailers/templates/template";
 import { HttpStatus } from "../../config/http.config";
+import { hashValue } from "../../common/utils/bcrypt";
 
 export class AuthService {
   public async register(registerData: RegisterDataType) {
@@ -260,6 +262,41 @@ export class AuthService {
     return {
       url: resetLink,
       emailId: data.id,
+    };
+  }
+
+  public async resetPassword({
+    password,
+    verificationCode,
+  }: resetPasswordType) {
+    const validCode = await VerificationCodeModel.findOne({
+      code: verificationCode,
+      type: VerificationEnum.PASSWORD_RESET,
+      expiresAt: { $gt: new Date() },
+    });
+
+    if (!validCode) {
+      throw new NotFoundException("Invalid or expired verification code");
+    }
+
+    const hashedPassword = hashValue(password);
+
+    const updatedUser = await userModel.findByIdAndUpdate(validCode.userId, {
+      password: hashedPassword,
+    });
+
+    if (!updatedUser) {
+      throw new BadRequestException("Failed to reset password!");
+    }
+
+    await validCode.deleteOne();
+
+    await SessionModel.deleteMany({
+      userId: updatedUser._id,
+    });
+
+    return {
+      user: updatedUser,
     };
   }
 }

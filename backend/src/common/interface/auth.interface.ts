@@ -11,3 +11,8 @@ export interface LoginDataType {
   password: string;
   userAgent?: string;
 }
+
+export interface resetPasswordType {
+  password: string;
+  verificationCode: string;
+}
