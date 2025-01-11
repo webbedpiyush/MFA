@@ -9,11 +9,12 @@ import { HttpStatus } from "./config/http.config";
 import { asyncHandler } from "./middlewares/asyncHandler";
 import authRouter from "./modules/auth/auth.routes";
 import passport from "./middlewares/passport";
-
+import { authenticateJWT } from "./common/strategies/jwt.strategy";
+import { sessionRouter } from "./modules/session/session.routes";
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
-console.log(BASE_PATH)
+console.log(BASE_PATH);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -25,7 +26,7 @@ app.use(
 );
 
 app.use(cookieParser());
-app.use(passport.initialize())
+app.use(passport.initialize());
 
 app.get(
   "/",
@@ -37,6 +38,7 @@ app.get(
 );
 
 app.use(`${BASE_PATH}/auth`, authRouter);
+app.use(`${BASE_PATH}/session`, authenticateJWT, sessionRouter);
 
 app.use(errorHandler);
 
